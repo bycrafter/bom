@@ -13,7 +13,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
+  release:
+    types: [created]
 jobs:
   build:
 
@@ -27,7 +28,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
+    - name: Gen Versioning Data
+        id: versioning
+        uses: Soumeh/Auto-Versioning@main 
+    - run: mvn --batch-mode --update-snapshots verify
+    - name: Publis Package
       run: mvn --batch-mode deploy
       env: 
         GITHUB_TOKEN: ${{secrets.JAVA_TOKEN}}
